@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${MIDASH_DB_URL}
+    username: ${MIDASH_DB_USER}
+    password: ${MIDASH_DB_PASSWORD}
+  jpa:
+    show-sql: ${MIDASH_DB_SHOWQSQL}
+    
+logging:
+  level:
+    com.midash.bank.*: DEBUG
