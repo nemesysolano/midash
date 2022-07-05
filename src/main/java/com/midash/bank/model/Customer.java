@@ -17,6 +17,7 @@ import lombok.extern.jackson.Jacksonized;
 
 /**
  * A person (not juridical) that holds at least one account in the bank.
+ * JPA + Jackson + Immutability + no accessors
  * @author rsolano
  *
  */
