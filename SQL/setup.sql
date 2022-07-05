@@ -17,3 +17,10 @@ create table account (
 	constraint account_pk primary key (account_id),
 	constraint account_fk1 foreign key (customer_id) references customer(customer_id)
 )
+
+/* 
+export MIDASH_DB_URL="jdbc:postgresql://localhost:5432/midash"
+export MIDASH_DB_USER="postgres"
+export MIDASH_DB_PASSWORD="vasorange#1"
+
+*/
