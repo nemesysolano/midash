@@ -77,6 +77,7 @@ public class AccountRepositoryTest extends BaseServiceTest{
 				.name(accountName2)
 				.balance(increasedBalance)
 				.build();
+				
 		accountRepository.save(updatedAccount);
 	}
 	

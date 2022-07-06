@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.midash.bank.BaseServiceTest;
 import com.midash.bank.MockClient;
 import com.midash.bank.dto.MoneyTransferRequest;
+import com.midash.bank.dto.MoneyTransferResponse;
 import com.midash.bank.model.Account;
 import com.midash.bank.model.Customer;
 import com.midash.bank.repository.AccountRepository;
@@ -78,6 +80,33 @@ public class TransactionControllerTest extends BaseServiceTest{
 
     @Test
     @Order(1)
+    public void transferWithEnoughFunds() throws Exception {
+        MoneyTransferRequest request =   MoneyTransferRequest.builder()
+        .sourceAccountId(account1.id)
+        .targetAccountId(account2.id)
+        .amount(20.0f)
+        .build();
+
+        MoneyTransferResponse response = MockClient.post(
+            mvc, 
+            "/transaction/transfer", 
+            request,
+            MoneyTransferResponse.class, 
+            MockMvcResultMatchers.status().isOk(),
+            Map.of()
+        );
+
+        log.debug("{}, {}", response.sourceAccountId, response.targetAccountId);
+        
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonRequest = mapper.writeValueAsString(request);
+        String jsonResponse = mapper.writeValueAsString(response);
+        log.debug(jsonRequest);
+        log.debug(jsonResponse);
+    }
+
+    @Test
+    @Order(2)
     public void transferWithInsufficientFunds() throws Exception {
         ErrorResponse response = MockClient.post(
             mvc, 
