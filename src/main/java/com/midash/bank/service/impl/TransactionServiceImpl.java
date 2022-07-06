@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.midash.BussinessException;
+
 import com.midash.TechnicalException;
 import com.midash.bank.model.Account;
 import com.midash.bank.repository.AccountRepository;
+import com.midash.bank.service.EntityNotFoundException;
+import com.midash.bank.service.InsufficientFundsException;
 import com.midash.bank.service.TransactionService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +48,9 @@ public class TransactionServiceImpl implements TransactionService {
             accountRepository.save(targetSourceAccount);
 
             if(sourceAccount.balance < amount) {                
-                throw new BussinessException( // This one is an application/bussiness exception as it is explicitly thrown by the app
-                    String.format("Insuficient funds in %s (%8.2f < %8.2f)", sourceAccount.name, sourceBalance, amount), //
+                throw new InsufficientFundsException( // This one is an application/bussiness exception as it is explicitly thrown by the app
+                    sourceBalance,
+                    amount,
                     log
                 );
             }
@@ -71,14 +74,16 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void delete(String accountId) throws TechnicalException {
+    public void delete(String accountId) throws EntityNotFoundException, TechnicalException {
         try {
             Optional<Account> result = accountRepository.findById(accountId);
             
-            if(result.isPresent()) {
-                accountRepository.delete(result.get());
+            if(!result.isPresent()) {                
+                throw new EntityNotFoundException(Account.class.getSimpleName(), log);
             }
-            
+
+            accountRepository.delete(result.get());
+
         }catch(DataAccessException | NoSuchElementException cause) {
             throw new TechnicalException("Can't delete account due to a database error.", cause, log);
         }
@@ -87,15 +92,15 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Account findById(String accountId) throws TechnicalException {
+    public Account findById(String accountId) throws EntityNotFoundException, TechnicalException  {
         try {
             Optional<Account> result = accountRepository.findById(accountId);
 
-            if(result.isPresent()) {
-                return result.get();
+            if(!result.isPresent()) {                
+                throw new EntityNotFoundException(Account.class.getSimpleName(), log);
             }
 
-            return null;
+            return result.get();
         }catch(DataAccessException cause) {
             throw new TechnicalException("Can't find account due to a database error.", cause, log);
         }

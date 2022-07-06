@@ -11,7 +11,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.javafaker.Faker;
-import com.midash.BussinessException;
+import com.midash.BusinessException;
 import com.midash.bank.BaseServiceTest;
 import com.midash.bank.model.Account;
 import com.midash.bank.model.Customer;
@@ -128,7 +128,7 @@ public class TransactionServiceTest extends BaseServiceTest {
     
             transactionService.transfer(account1.id, account2.id, withdrawAmount);
 
-        }catch(BussinessException cause) {
+        }catch(BusinessException cause) {
             log.debug("Transaction with underflow.");
             
         } finally {
