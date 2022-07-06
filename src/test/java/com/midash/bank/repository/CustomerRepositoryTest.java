@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.log4j.Logger;
+
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,10 @@ import com.github.javafaker.Faker;
 import com.midash.bank.BaseServiceTest;
 import com.midash.bank.model.Customer;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CustomerRepositoryTest extends BaseServiceTest{
-	static Logger logger = Logger.getLogger(CustomerRepositoryTest.class);
 	
 	@Autowired
 	CustomerRepository customerRepository;

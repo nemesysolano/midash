@@ -5,17 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.midash.bank.BaseServiceTest;
 import com.midash.bank.model.Customer;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SerializationTest extends BaseServiceTest{
-	static Logger logger = LoggerFactory.getLogger(SerializationTest.class);
 	Faker faker = new Faker();
 	
 	@Test
@@ -33,7 +32,7 @@ public class SerializationTest extends BaseServiceTest{
 		Customer parsedCustomer = objectMapper.readValue(customerJSON, Customer.class);
 		
 		assertEquals(parsedCustomer.id, customer.id);
-		logger.debug("JSON={}", customerJSON);
+		log.debug("JSON={}", customerJSON);
 		
 	}
 }

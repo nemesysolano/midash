@@ -1,9 +1,8 @@
-package com.midash.bank.repository;
+package com.midash.bank.service;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
@@ -15,14 +14,18 @@ import com.github.javafaker.Faker;
 import com.midash.bank.BaseServiceTest;
 import com.midash.bank.model.Account;
 import com.midash.bank.model.Customer;
-import com.midash.bank.service.InsuficientFundsException;
-import com.midash.bank.service.TransactionService;
+import com.midash.bank.repository.AccountRepository;
+import com.midash.bank.repository.CustomerRepository;
+
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+@Slf4j
 @TestInstance(Lifecycle.PER_CLASS)
 public class TransactionServiceTest extends BaseServiceTest {
-    static Logger logger = Logger.getLogger(TransactionServiceTest.class);
-
+    
     @Autowired
     TransactionService transactionService;
 
@@ -74,11 +77,11 @@ public class TransactionServiceTest extends BaseServiceTest {
         customer2 = createCustomer();
         account1 = createAccount(customer1, 101);
         account2 = createAccount(customer2, 100);
-        logger.debug("Fake customers and accounts created.");
+        log.debug("Fake customers and accounts created.");
     }	
 
     private void logAccountData(String message, Account account) {
-        logger.debug(
+        log.debug(
             String.format("%s -> description=%s, balance=%8.2f",  
             message,
             account.name,
@@ -91,7 +94,7 @@ public class TransactionServiceTest extends BaseServiceTest {
     public void validTransfer() {
         double withdrawAmount = 25.0;
 
-        logger.debug("validTransfer");
+        log.debug("validTransfer");
 
         logAccountData("account 1 before transfer", this.account1);
         logAccountData("account 2 before transfer", this.account2);
@@ -112,7 +115,7 @@ public class TransactionServiceTest extends BaseServiceTest {
     @Order(2)
     public void transferWithInsuficcientfunds() {
         double withdrawAmount = 101.0;
-        logger.debug("transferWithInsuficcientfunds");
+        log.debug("transferWithInsuficcientfunds");
 
         Account account1 = transactionService.findById(this.account1.id);
         Account account2 = transactionService.findById(this.account2.id);
@@ -125,7 +128,7 @@ public class TransactionServiceTest extends BaseServiceTest {
             transactionService.transfer(account1.id, account2.id, withdrawAmount);
 
         }catch(InsuficientFundsException cause) {
-            logger.debug("Transaction with underflow.");
+            log.debug("Transaction with underflow.");
             
         } finally {
             Account account1Updated = transactionService.findById(account1.id);
@@ -145,6 +148,6 @@ public class TransactionServiceTest extends BaseServiceTest {
         accountRepository.deleteById(account2.id);
 		customerRepository.deleteById(customer1.id);
         customerRepository.deleteById(customer2.id);
-        logger.debug("Fake customers and accounts removed.");
+        log.debug("Fake customers and accounts removed.");
 	}
 }

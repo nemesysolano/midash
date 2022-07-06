@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,12 @@ import com.midash.bank.repository.AccountRepository;
 import com.midash.bank.service.InsuficientFundsException;
 import com.midash.bank.service.TransactionService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @Transactional(value = Transactional.TxType.REQUIRED)
+@Slf4j
 public class TransactionServiceImpl implements TransactionService {
-    Logger logger = Logger.getLogger(TransactionServiceImpl.class);
     
     @Autowired
     AccountRepository accountRepository;
@@ -38,19 +40,21 @@ public class TransactionServiceImpl implements TransactionService {
                 .balance(targetAccount.balance + amount)
                 .build();
 
-            if(sourceAccount.balance < amount) {
-                throw new InsuficientFundsException(
+            accountRepository.save(updatedSourceAccount);
+            accountRepository.save(targetSourceAccount);
+
+            if(sourceAccount.balance < amount) {                
+                throw new InsuficientFundsException( // This one is an application/bussiness exception as it is explicitly thrown by the app
                     String.format("Insuficient funds in %s (%8.2f < %8.2f)", sourceAccount.name, sourceAccount.balance, amount), 
-                    logger
+                    log
                 );
             }
 
-            accountRepository.save(updatedSourceAccount);
-            accountRepository.save(targetSourceAccount);
-        }catch(DataAccessException cause) {
-            throw new MidashException("Can't perform money transfer between accounts due to a database error", cause, logger);
+
+        }catch(DataAccessException cause) {            
+            throw new MidashException("Can't perform money transfer between accounts due to a database error", cause, log); //TechnicalException
         }catch(NoSuchElementException cause) {
-            throw new MidashException("Source or target account does not exist.", cause, logger);
+            throw new MidashException("Source or target account does not exist.", cause, log); //TechnicalException
         }
     }
 
@@ -59,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             accountRepository.save(account);
         }catch(DataAccessException cause) {
-            throw new MidashException("Can't create account due to a database error.", cause, logger);
+            throw new MidashException("Can't create account due to a database error.", cause, log);
         }
         
     }
@@ -74,7 +78,7 @@ public class TransactionServiceImpl implements TransactionService {
             }
             
         }catch(DataAccessException | NoSuchElementException cause) {
-            throw new MidashException("Can't delete account due to a database error.", cause, logger);
+            throw new MidashException("Can't delete account due to a database error.", cause, log);
         }
         
         
@@ -91,7 +95,7 @@ public class TransactionServiceImpl implements TransactionService {
 
             return null;
         }catch(DataAccessException cause) {
-            throw new MidashException("Can't find account due to a database error.", cause, logger);
+            throw new MidashException("Can't find account due to a database error.", cause, log);
         }
         
     }
