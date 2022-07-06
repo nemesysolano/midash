@@ -8,19 +8,19 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
-import com.midash.bank.BaseServiceTest;
+import com.midash.bank.BaseTest;
 import com.midash.bank.model.Customer;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SerializationTest extends BaseServiceTest{
+public class SerializationTest extends BaseTest {
 	Faker faker = new Faker();
 	
 	@Test
 	@Order(1)
 	public void testSerialization() throws JsonProcessingException {
-		String customerId = RandomStringUtils.random(UUID_LENGTH, true, true);
+		String customerId = RandomStringUtils.random(10, true, true);
 		ObjectMapper objectMapper = new ObjectMapper();
 		Customer customer = Customer.builder()
 				.id(customerId)
