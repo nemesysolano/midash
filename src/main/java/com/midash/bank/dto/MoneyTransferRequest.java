@@ -10,13 +10,24 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.jackson.Jacksonized;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Jacksonized @Builder(toBuilder=true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @ToString
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE, force = true)
 public class MoneyTransferRequest implements Serializable {
+    @NotNull
+    @NotBlank
     public final String sourceAccountId;
+
+    @NotNull
+    @NotBlank
     public final String targetAccountId;
+
+    @Min(0)
     public final double amount;
 }
