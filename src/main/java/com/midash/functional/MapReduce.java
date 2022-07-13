@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MapReduce {
 
     public static <T, R> Set<R> toSet(ForkJoinPool executor, Collection<T> collection, Function<T, R> transformer) {
-        log.debug("reducing collection");
         if (collection == null || collection.size() == 0) {
             return Set.of();
         }
@@ -55,7 +54,6 @@ public class MapReduce {
     }
 
     public static <T, R> Set<R> toSet(ForkJoinPool executor, Iterable<T> iterable, Function<T, R> transformer) {
-        log.debug("reducing from collection");
         if (iterable == null) {
             return Set.of();
         }
